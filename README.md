@@ -10,7 +10,7 @@ Students are expected to:
 Student Info
 =======================
 
-* Name: *YourNameHere*
-* ID: *YourIdHere*
-* Group ID: *Your Group ID here*
+* Name: Đào Dương Hoàng Long 
+* ID: BI9 - 154 	
+* Group ID: 2 
 
