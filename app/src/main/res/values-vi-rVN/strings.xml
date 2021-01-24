@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">USTH WEATHER</string>
+    <string name="image">ảnh</string>
+    <string name="hanoi">Hà Nội</string>
+    <string name="cloudy">nhiều mây</string>
+    <string name="mon">thứ 2</string>
+    <string name="tue">thứ 3</string>
+    <string name="wed">thứ 4</string>
+    <string name="thu">thứ 5</string>
+    <string name="fri">thứ 6</string>
+    <string name="sat">thứ 7</string>
+    <string name="sun">chủ nhật</string>
+</resources>
