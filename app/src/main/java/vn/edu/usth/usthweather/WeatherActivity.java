@@ -6,11 +6,16 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
+import android.media.MediaPlayer;
+
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.Toast; // Use Toast class to display message
 
 import android.os.Bundle;
+
+import java.io.InputStream;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -27,10 +32,13 @@ public class WeatherActivity extends AppCompatActivity {
                 getSupportFragmentManager()
         );
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
-//        pager.setOffscreenPageLimit(3);
+        pager.setOffscreenPageLimit(3);
         pager.setAdapter(adapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab);
         tabLayout.setupWithViewPager(pager);
+
+        MediaPlayer music = MediaPlayer.create(this, R.raw.audio);
+        music.start();
     }
 
     @Override
