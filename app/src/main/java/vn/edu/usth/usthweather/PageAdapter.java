@@ -28,6 +28,6 @@ public class PageAdapter extends FragmentPagerAdapter {
     }
     @Override
     public CharSequence getPageTitle(int page) {
-        return "Page " + page;
+        return "Page " + page ;
     }
 }
