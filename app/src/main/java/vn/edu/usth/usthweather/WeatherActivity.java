@@ -9,12 +9,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,26 +25,30 @@ import android.widget.Toast; // Use Toast class to display message
 
 import android.os.Bundle;
 
-import java.io.InputStream;
-
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class WeatherActivity extends AppCompatActivity {
-    final Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            // This method is executed in main thread
-            String content = msg.getData().getString("server_response");
-            Toast.makeText(getApplicationContext(), content, Toast.LENGTH_SHORT).show();
-        }
-    };
+//    final Handler handler = new Handler(Looper.getMainLooper()) {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            // This method is executed in main thread
+//            String content = msg.getData().getString("server_response");
+//            Toast.makeText(getApplicationContext(), content, Toast.LENGTH_SHORT).show();
+//        }
+//    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-
+        // View Pager
         PagerAdapter adapter = new PageAdapter(
                 getSupportFragmentManager()
         );
@@ -52,31 +58,34 @@ public class WeatherActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab);
         tabLayout.setupWithViewPager(pager);
 
-        Thread t = new Thread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void run() {
-                // this method is run in a worker thread
-                try {
-                    // wait for 5 seconds to simulate a long network access
-                    Thread.sleep(3000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // Assume that we got our data from server
-                Bundle bundle = new Bundle();
-                bundle.putString("server_response", "data");
-                // notify main thread
-                Message msg = new Message();
-                msg.setData(bundle);
-                handler.sendMessage(msg);
-            }
-        });
-        t.start();
 
-        MediaPlayer music = MediaPlayer.create(this, R.raw.audio);
-        music.start();
+    }
+
+
+    private void copyFiletoExternalStorage(int resourceId, String resourceName){
+
+        try{
+//            File file = new File(getExternalFilesDir(null), resourceName);
+            File file = new File(getExternalFilesDir(null), resourceName);
+            InputStream in = getResources().openRawResource(resourceId);
+            FileOutputStream out = new FileOutputStream(file);
+            byte[] buff = new byte[1024];
+            int read = 0;
+            try {
+                while ((read = in.read(buff)) > 0) {
+                    out.write(buff, 0, read);
+                }
+            } finally {
+                in.close();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "Errors!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -125,7 +134,38 @@ public class WeatherActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_refresh:
             {
-                Toast.makeText(getApplicationContext(), "Refreshing...", Toast.LENGTH_SHORT).show();
+                AsyncTask<String, Integer, Bitmap> task = new AsyncTask<String, Integer, Bitmap>() {
+                    @Override
+                    protected void onPreExecute() {
+                        // do some preparation here, if needed
+                    }
+                    @Override
+                    protected Bitmap doInBackground(String... params) {
+                        // This is where the worker thread's code is executed
+                        // params are passed from the execute() method call
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onProgressUpdate(Integer... values) {
+                        // This method is called in the main thread, so it's possible
+                        // to update UI to reflect the worker thread progress here.
+                        // In a network access task, this should update a progress bar
+                        // to reflect how many percent of data has been retrieved
+                    }
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap) {
+                        // This method is called in the main thread. After #doInBackground returns
+                        // the bitmap data, we simply set it to an ImageView using ImageView.setImageBitmap()
+                        //                // Assume that we got our data from server
+                        Toast.makeText(getApplicationContext(), "some sample json here", Toast.LENGTH_SHORT).show();
+                    }
+                };
+                task.execute("http://ict.usth.edu.vn/wp-content/uploads/usth/usthlogo.png");
                 return true;
             }
             case R.id.action_settings:
